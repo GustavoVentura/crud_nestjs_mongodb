@@ -17,10 +17,15 @@ export class CarrosController {
     return this.carrosService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.carrosService.findOne(id);
+  @Get(':placa')
+  findOne(@Param('placa') placa: string) {
+    return this.carrosService.findOne(placa);
   }
+
+  // @Get(':placa')
+  // findbyPlaca(@Param('placa') placa: string) {
+  //   return this.carrosService.findOne(placa);
+  // }
   
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateCarroDto: UpdateCarroDto) {
