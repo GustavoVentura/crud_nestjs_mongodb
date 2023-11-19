@@ -1,11 +1,11 @@
 import { CreateCarroDto } from "src/carros/dto/create-carro.dto";
 
-export const CarroDTOStub = (): CreateCarroDto => {
+export const CarroDTOStubInvalidFabricationYear = (): CreateCarroDto => {
   return {
     marca: 'Honda',
     modelo: "HRV",
-    cor: "Preto",
+    cor: "pretp",
     placa: "LLW9988",
-    anoFabricacao: 2023
+    anoFabricacao: 2024
   };
 };

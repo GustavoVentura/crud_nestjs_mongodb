@@ -27,11 +27,17 @@ export class CarrosController {
   //   return this.carrosService.findOne(placa);
   // }
   
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCarroDto: UpdateCarroDto) {
-    console.log(id)
-    return this.carrosService.update(id, updateCarroDto);
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateCarroDto: UpdateCarroDto) {
+  //   console.log(id)
+  //   return this.carrosService.update(id, updateCarroDto);
+  // }
+  
+  @Patch(':placa')
+  update(@Param('placa') placa: string, @Body() updateCarroDto: UpdateCarroDto) {
+    return this.carrosService.update(placa, updateCarroDto);
   }
+
 
   @Delete(':id')
   remove(@Param('id') id: string) {
