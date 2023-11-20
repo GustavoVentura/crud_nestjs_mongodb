@@ -1,5 +1,4 @@
-import { IsDefined, IsNotEmpty, IsNumber, IsString, MaxLength,  Min,  min } from "@nestjs/class-validator"
-import { Max } from "class-validator";
+import { IsDefined, IsNotEmpty, IsNumber, IsString, MaxLength,  Min, Max, NotEquals } from "@nestjs/class-validator"
 export class CreateCarroDto {
     @IsNotEmpty()
     @IsDefined()

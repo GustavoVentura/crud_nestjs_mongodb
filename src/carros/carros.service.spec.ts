@@ -7,6 +7,7 @@ import { getModelToken } from "@nestjs/mongoose";
 import { CreateCarroDto } from "./dto/create-carro.dto";
 import { CarroAlreadyExists } from "../../test/carro-already-exists.exception";
 import { InvalidFabricationYear } from "../../test/invalid-ano-fabricacao.exception";
+import { ValidationException } from "../../src/filters/validation.exception";
 
 
 describe("AppController", () => {
@@ -41,7 +42,7 @@ describe("AppController", () => {
     }
   });
 
-  describe("Criando Carro", () => {
+  describe("SERVICE - Criando Carro", () => {
     // Criando primeiro objeto carro, deve retornar o objeto salvo
     it("Returning saved object", async () => {
       const CarroDTOStub = (): CreateCarroDto => {
@@ -81,7 +82,7 @@ describe("AppController", () => {
       const CarroDTOStub = (): CreateCarroDto => {
         return {
           marca: 'Fiat',
-          modelo: "Toro",
+          modelo: "Grand Siena",
           cor: "Prata",
           placa: "PPK8822",
           anoFabricacao: 2031
@@ -90,36 +91,103 @@ describe("AppController", () => {
       await expect(carroService.create(CarroDTOStub())).rejects.toThrow(InvalidFabricationYear);    
     });
 
+    it("Exception while creanting object car with null attribute", async () => {
+      const CarroDTOStub = (): CreateCarroDto => {
+        return {
+          marca: 'Fiat',
+          modelo: "Grand Siena",
+          cor: "Prata",
+          placa: null,
+          anoFabricacao: 2031
+        };
+      };
+      await expect(carroService.create(CarroDTOStub())).rejects.toThrow(ValidationException);    
+    });
+
+    });
 
 
-    // it("Lança exceção caso o anoFabricacao passado seja maior que o ano atual", async () => {
-    //     const anoAtual = new Date().getFullYear()
-    //     expect(carroController.create(CarroDTOStubInvalidFabricationYear()))
-    //     .rejects.toThrow(InvalidFabricationYear)
-    // })
-  });
 
 
-  // describe("UpdateCarro", () => {
-  //   it("Lança exceção caso a placa passada já exista em outro veiculo (Bad Request - 400) exception", async () => {
-  //       carroController.create(CarroDTOStub2());
-  //       await expect(carroController.update(CarroUpdateDTOStub().placa, CarroUpdateDTOStub())).rejects.toThrow(CarroAlreadyExists); 
-  //   }) 
-  //   it("Lança exceção caso o anoFabricação passado for maior que anos atual", async () => {
-  //       const anoAtual = new Date().getFullYear()
-  //       await expect(carroController.update("LLW9988", CarroUpdateDTOInvalidFabricationYearStub())).rejects.toThrow(InvalidFabricationYear);
-  //   })
-  // })
+  describe("UpdateCarro", () => {
+    it("Returning saved object", async () => {
+      const CarroDTOStub = (): CreateCarroDto => {
+        return {
+          marca: 'Chevrolet',
+          modelo: "Prisma",
+          cor: "Vermelho",
+          placa: "IPO2345",
+          anoFabricacao: 2014
+        };
+      };
+      carroService.create(CarroDTOStub());
 
-//   describe("getArticle", () => {
-//     it("should return the corresponding saved object", async () => {
-//       await (new carroModel(CarroDTOStub()).save());
-//       const carro = await carroController.findOne(CarroDTOStub().placa);
-//       expect(carro).toBe(CarroDTOStub().placa);
-//     });
-//     it("should return null", async () => {
-//       const carro = await carroController.findOne(CarroDTOStub().marca);
-//       expect(carro).toBeNull();
-//     });
-//   });
+      const CarroDTOStub2 = (): CreateCarroDto => {
+        return {
+          marca: 'Chevrolet',
+          modelo: "Azul",
+          cor: "Vermelho",
+          placa: "IPO23455",
+          anoFabricacao: 2014
+        };
+      };
+
+      const updateCarro = await carroService.update("IPO2345", CarroDTOStub2());
+      expect(updateCarro.marca).toBe(CarroDTOStub2().marca);
+      expect(updateCarro.modelo).toBe(CarroDTOStub2().modelo);
+      expect(updateCarro.cor).toBe(CarroDTOStub2().cor);
+      expect(updateCarro.placa).toBe(CarroDTOStub2().placa);
+      expect(updateCarro.anoFabricacao).toBe(CarroDTOStub2().anoFabricacao);
+      expect(updateCarro).toHaveProperty("_id")
+    });
+    it("Exception caso a placa passada já exista em outro veiculo", async () => {
+      const CarroDTOStub2 = (): CreateCarroDto => {
+        return {
+          marca: 'Volks',
+          modelo: "Voyage",
+          cor: "Prata",
+          placa: "IIP9834",
+          anoFabricacao: 2008
+        };
+      };
+
+      const CarroDTOStub = (): CreateCarroDto => {
+        return {
+          marca: 'Fiat',
+          modelo: "Grand Siena",
+          cor: "Branco",
+          placa: "LLW8387",
+          anoFabricacao: 2013
+        };
+      };
+        carroController.create(CarroDTOStub2())
+        await expect(carroController.update("IIP9834", CarroDTOStub())).rejects.toThrow(CarroAlreadyExists); 
+    }) 
+    it("Exception caso anoFabricação for maior que ano atual", async () => {
+      const CarroDTOStub = (): CreateCarroDto => {
+        return {
+          marca: 'Fiat',
+          modelo: "Grand Siena",
+          cor: "Branco",
+          placa: "LLW8387",
+          anoFabricacao: 2033
+        };
+      };
+        await expect(carroController.update("LLW8387", CarroDTOStub())).rejects.toThrow(InvalidFabricationYear);
+    })
+    it("Exception updating car object with null attribute", async () => {
+      const CarroDTOStub = (): CreateCarroDto => {
+        return {
+          marca: 'Fiat',
+          modelo: "Grand Siena",
+          cor: null,
+          placa: "LLW8387",
+          anoFabricacao: 2013
+        };
+      };
+      await expect(carroService.update("LLW8387", CarroDTOStub())).rejects.toThrow(ValidationException);    
+    });
+  })
+
+
 });

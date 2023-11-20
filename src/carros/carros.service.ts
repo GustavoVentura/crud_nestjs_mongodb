@@ -6,6 +6,7 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CarroAlreadyExists } from '../../test/carro-already-exists.exception';
 import { InvalidFabricationYear } from '../../test/invalid-ano-fabricacao.exception';
+import { ValidationException } from '../../src/filters/validation.exception';
 
 @Injectable()
 export class CarrosService {
@@ -13,6 +14,13 @@ export class CarrosService {
   constructor(@InjectModel(Carro.name) private carroModel: Model<CarroDocument>) {}
 
   async create(payload: CreateCarroDto) {
+
+    for (let i in payload){
+      if (payload[i] == null) {
+          throw new ValidationException([ "Atributo " + i + " é nulo" ])
+      }
+    }
+
     if ( payload.anoFabricacao > new Date().getFullYear() ) throw new InvalidFabricationYear();
     if ( await this.carroModel.exists({"placa": payload.placa})) throw new CarroAlreadyExists();
     return new this.carroModel(payload).save();
@@ -25,17 +33,13 @@ export class CarrosService {
   async findOne(placa: string) {
     return this.carroModel.find({"placa": placa});
   }
-
-  // findbyPlaca(placa: string) {
-  //   return this.carroModel.find({"placa": placa});
-  // }
-
-  // async update(id: string, payload: UpdateCarroDto) {
-  //   return this.carroModel.findByIdAndUpdate( id, payload ,{ new: true } );
-  // }
   
   async update(placa: string, payload: UpdateCarroDto) {
     let existingCarro;
+
+    for (let i in payload){
+      if (payload[i] == null) {throw new ValidationException([ "Atributo " + i + " é nulo" ]) }
+    }
 
     //Lança exceção caso passe uma data maior que a atual
     if (payload.anoFabricacao > new Date().getFullYear()) throw new InvalidFabricationYear();
@@ -47,8 +51,8 @@ export class CarrosService {
     }
 
 
-    existingCarro = await this.carroModel.findOne({"placa": placa}).exec();
-    return this.carroModel.findByIdAndUpdate(existingCarro._id, payload);
+    existingCarro = (await this.carroModel.findOne({"placa": placa}).exec());
+    return await this.carroModel.findByIdAndUpdate(existingCarro._id, payload, {new: true});
 
   }
 
