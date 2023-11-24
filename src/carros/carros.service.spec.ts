@@ -8,9 +8,10 @@ import { CreateCarroDto } from "./dto/create-carro.dto";
 import { CarroAlreadyExists } from "../../test/carro-already-exists.exception";
 import { InvalidFabricationYear } from "../../test/invalid-ano-fabricacao.exception";
 import { ValidationException } from "../../src/filters/validation.exception";
+import { before, beforeEach } from "node:test";
 
 
-describe("AppController", () => {
+describe("CarroService", () => {
   let mongoConnection: Connection;
   let carroController: CarrosController;
   let carroService: CarrosService;
@@ -28,19 +29,26 @@ describe("AppController", () => {
     }).compile();
     carroController = app.get<CarrosController>(CarrosController);
     carroService = app.get<CarrosService>(CarrosService);
-  });
 
-  afterAll(async () => {
-    await mongoConnection.close();
-  });
 
-  beforeAll(async () => {
     const collections = mongoConnection.collections;
     for (const key in collections) {
       const collection = collections[key];
       await collection.deleteMany({});
     }
   });
+
+  afterAll(async () => {
+    await mongoConnection.close();
+  });
+
+  // beforeAll(async () => {
+  //   const collections = mongoConnection.collections;
+  //   for (const key in collections) {
+  //     const collection = collections[key];
+  //     await collection.deleteMany({});
+  //   }
+  // });
 
   describe("SERVICE - Criando Carro", () => {
     // Criando primeiro objeto carro, deve retornar o objeto salvo
@@ -104,10 +112,6 @@ describe("AppController", () => {
       await expect(carroService.create(CarroDTOStub())).rejects.toThrow(ValidationException);    
     });
 
-    });
-
-
-
 
   describe("UpdateCarro", () => {
     it("Returning saved object", async () => {
@@ -120,7 +124,7 @@ describe("AppController", () => {
           anoFabricacao: 2014
         };
       };
-      carroService.create(CarroDTOStub());
+      await carroService.create(CarroDTOStub());
 
       const CarroDTOStub2 = (): CreateCarroDto => {
         return {
@@ -160,7 +164,7 @@ describe("AppController", () => {
           anoFabricacao: 2013
         };
       };
-        carroController.create(CarroDTOStub2())
+        await carroController.create(CarroDTOStub2())
         await expect(carroController.update("IIP9834", CarroDTOStub())).rejects.toThrow(CarroAlreadyExists); 
     }) 
     it("Exception caso anoFabricação for maior que ano atual", async () => {
@@ -189,5 +193,5 @@ describe("AppController", () => {
     });
   })
 
-
+  });  
 });
