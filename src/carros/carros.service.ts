@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCarroDto } from './dto/create-carro.dto';
 import { UpdateCarroDto } from './dto/update-carro.dto';
 import { Carro, CarroDocument } from './entities/carro.entity';
@@ -12,9 +12,7 @@ import { ValidationException } from '../../src/filters/validation.exception';
 export class CarrosService {
   
   constructor(@InjectModel(Carro.name) private carroModel: Model<CarroDocument>) {}
-
   async create(payload: CreateCarroDto) {
-
     for (let i in payload){
       if (payload[i] == null) {
           throw new ValidationException([ "Atributo " + i + " é nulo" ])
@@ -27,11 +25,21 @@ export class CarrosService {
   }
 
   async findAll() {
-    return this.carroModel.find();
+    const carros = await this.carroModel.find();
+    if ( !carros || carros.length == 0){
+      throw new NotFoundException(`Nenhum carro econcontrado na base`)
+    }
+    return carros
+
   }
 
   async findOne(placa: string) {
-    return this.carroModel.find({"placa": placa});
+    const carro = await this.carroModel.find({"placa": placa}).exec();
+    if ( !carro || carro.length == 0 ){
+      throw new NotFoundException(`Placa ${placa} não encontrada`)
+    }
+    return carro;
+
   }
   
   async update(placa: string, payload: UpdateCarroDto) {
