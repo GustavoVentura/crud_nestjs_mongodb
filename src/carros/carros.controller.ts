@@ -17,7 +17,7 @@ export class CarrosController {
       return error
     }
   }
-  @IsPublic()
+  
   @Get()
   findAll() {
     return this.carrosService.findAll();

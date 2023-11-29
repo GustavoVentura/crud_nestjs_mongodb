@@ -12,9 +12,12 @@ export class AuthService {
     constructor(
         private readonly userService: UsersService, 
         private readonly jwtService: JwtService,
-    ){}
+    ){
+        console.log('AuthService constructor')
+    }
 
     login(user: User): UserToken {
+        console.log('AuthService login')
         // Transforma o user em um JWT
         const payload: UserPayload = {
 
@@ -31,6 +34,7 @@ export class AuthService {
     }
 
     async validateUser(username: string, password: string) {
+        console.log('AuthService validateUser')
         const user = await this.userService.findUser(username);
 
         if (user){
@@ -43,7 +47,7 @@ export class AuthService {
             }
         }
         //Se chegar aqui, significa que não encontrou o user e/ou a senha não corresponde
-        //throw new UnauthorizedException('Email address or password is incorret.')
+        // throw new UnauthorizedException('Email address or password is incorret.')
         throw new Error('Email address or password is incorret.')
     }
 }
