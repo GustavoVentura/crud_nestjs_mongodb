@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { CarrosService } from './carros.service';
 import { CreateCarroDto } from './dto/create-carro.dto';
 import { UpdateCarroDto } from './dto/update-carro.dto';
+import { IsPublic } from 'src/auth/decorator/is-public.decorator';
 
 @Controller('carros')
 export class CarrosController {
@@ -16,7 +17,7 @@ export class CarrosController {
       return error
     }
   }
-
+  @IsPublic()
   @Get()
   findAll() {
     return this.carrosService.findAll();
