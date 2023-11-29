@@ -24,14 +24,14 @@ describe('AppController (e2e)', () => {
   describe('Carros E2E Tests', () => {
     const E2E_APP_URL='/carros'
 
-    it('get /carros -> Deve Retornar uma NotFoundException e statusCode 204', () => {
-      return request(app.getHttpServer())
+    it('get /carros -> Deve Retornar uma NotFoundException e statusCode 204', async () => {
+      return await request(app.getHttpServer())
         .get('/carros')
         .expect(404);
     });
 
-    it('post /carros -> Deve Retornar um objeto carro e statusCode 200', () => {
-      return request(app.getHttpServer()).post(E2E_APP_URL)
+    it('post /carros -> Deve Retornar um objeto carro e statusCode 200', async () => {
+      return await request(app.getHttpServer()).post(E2E_APP_URL)
       .send({
         marca: 'Fiat',
         modelo: "Grand Siena",
@@ -41,20 +41,20 @@ describe('AppController (e2e)', () => {
       }).expect(201)
     })
 
-    it('get /carros -> Deve Retornar uma lista de carros e statusCode 200', () => {
-      return request(app.getHttpServer())
+    it('get /carros -> Deve Retornar uma lista de carros e statusCode 200', async () => {
+      return await request(app.getHttpServer())
         .get('/carros')
         .expect(200);
     });
 
-    it('get carros/placa -> Deve retornar NotFoundException e statusCode 404 ', () => {
-      return request(app.getHttpServer())
+    it('get carros/placa -> Deve retornar NotFoundException e statusCode 404 ', async () => {
+      return await request(app.getHttpServer())
         .get('/carros/XXDDBB')
         .expect(404);
     });
 
-    it('post /carros -> Deve Retornar InvalidFabricationYear e statusCode 400', () => {
-      return request(app.getHttpServer()).post(E2E_APP_URL)
+    it('post /carros -> Deve Retornar InvalidFabricationYear e statusCode 400', async () => {
+      return await request(app.getHttpServer()).post(E2E_APP_URL)
       .send({
         marca: 'Fiat',
         modelo: "Grand Siena",
@@ -64,8 +64,8 @@ describe('AppController (e2e)', () => {
       }).expect(400)
     })
 
-    it('post /carros -> Deve Retornar ValidationException e statusCode 400', () => {
-      return request(app.getHttpServer()).post(E2E_APP_URL)
+    it('post /carros -> Deve Retornar ValidationException e statusCode 400', async () => {
+      return await request(app.getHttpServer()).post(E2E_APP_URL)
       .send({
         marca: 'Fiat',
         modelo: "Grand Siena",

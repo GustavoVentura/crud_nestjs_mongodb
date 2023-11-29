@@ -4,9 +4,22 @@ import { ValidationPipe } from '@nestjs/common';
 import { ValidationError } from 'class-validator';
 import { ValidationFilter } from './filters/validation.filter';
 import { ValidationException } from './filters/validation.exception';
+import * as session from 'express-session';
+import * as passport from 'passport';
+
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  // app.use(
+  //   session({
+  //     secret: "ik82hdmç0dScf42qHDsd",
+  //     resave: false,
+  //     saveUninitialized: false,
+  //     cookie:{
+  //       maxAge: 60000,
+  //     }
+  //   })
+  // )
   app.useGlobalFilters(
     new ValidationFilter()
   )

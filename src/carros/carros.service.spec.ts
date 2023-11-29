@@ -8,7 +8,6 @@ import { CreateCarroDto } from "./dto/create-carro.dto";
 import { CarroAlreadyExists } from "../../test/carro-already-exists.exception";
 import { InvalidFabricationYear } from "../../test/invalid-ano-fabricacao.exception";
 import { ValidationException } from "../../src/filters/validation.exception";
-import { before, beforeEach } from "node:test";
 
 
 describe("CarroService", () => {
@@ -24,12 +23,10 @@ describe("CarroService", () => {
       controllers: [CarrosController],
       providers: [
         CarrosService,
-        {provide: getModelToken(Carro.name), useValue: carroModel},
-      ],
+        {provide: getModelToken(Carro.name), useValue: carroModel},],
     }).compile();
     carroController = app.get<CarrosController>(CarrosController);
     carroService = app.get<CarrosService>(CarrosService);
-
 
     const collections = mongoConnection.collections;
     for (const key in collections) {

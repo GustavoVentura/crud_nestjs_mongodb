@@ -9,7 +9,12 @@ export class CarrosController {
 
   @Post()
   create(@Body() createCarroDto: CreateCarroDto) {
-    return this.carrosService.create(createCarroDto);
+    console.log(createCarroDto)
+    try {
+      return this.carrosService.create(createCarroDto);
+    } catch (error) {
+      return error
+    }
   }
 
   @Get()
